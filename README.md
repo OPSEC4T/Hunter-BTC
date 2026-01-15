@@ -9,7 +9,7 @@
 
 ---
 
-## 🏗️ Architettura & Tecnologia
+##  Architettura & Tecnologia
 
 Il sistema utilizza uno stack tecnologico moderno containerizzato:
 
@@ -19,7 +19,7 @@ Il sistema utilizza uno stack tecnologico moderno containerizzato:
 
 ---
 
-## 🚀 Guida all'Installazione
+##  Guida all'Installazione
 
 Segui questi step per attivare il tuo nodo in meno di 5 minuti.
 

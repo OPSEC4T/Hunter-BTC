@@ -465,6 +465,24 @@
             transform: scale(1.1) rotate(5deg);
         }
 
+        /* Hover override for the Green/Sell pipeline cards */
+        /* We can target them via inline style override or better via nth-of-type, but inline style was used in HTML for initial color.
+           Let's create a specific class or assume the inline style handles the base, but hover needs !important or specific selector.
+           Let's rely on a new class added via replace if needed, or simpler: adjacent sibling selector?
+           Actually, the inline styles in HTML set the base color. The hover effect above forces orange.
+           I need to make sure the green cards turn GREEN on hover, not orange.
+        */
+        .tech-pipeline:nth-of-type(2) .tech-card:hover .tech-icon,
+        .tech-pipeline:last-of-type .tech-card:hover .tech-icon {
+            background: #10b981 !important;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
+        }
+
+        .tech-pipeline:nth-of-type(2) .tech-card:hover,
+        .tech-pipeline:last-of-type .tech-card:hover {
+            border-color: rgba(16, 185, 129, 0.8) !important;
+        }
+
         .tech-card h3 {
             font-size: 1.5rem;
             margin-bottom: 15px;
@@ -831,7 +849,12 @@
                 </div>
             </div>
 
-            <!-- GLASS PIPELINE MODULES -->
+            <!-- PHASE 1: BUY -->
+            <h3 class="reveal"
+                style="margin-top: 60px; margin-bottom: 20px; font-size: 1.8rem; border-left: 4px solid var(--btc-orange); padding-left: 15px;">
+                Fase 1: <span style="color: var(--btc-orange);">Acquisto</span> (Sniper Entry)
+            </h3>
+
             <div class="tech-pipeline reveal">
                 <div class="pipeline-line"></div> <!-- Visual Connector Line -->
 
@@ -863,7 +886,47 @@
                             style="color: var(--btc-orange); text-decoration: none; font-weight: bold;">@il_mio_trader_btc_bot</a>
                         e attende i comandi.</p>
                 </div>
+            </div>
 
+            <!-- PHASE 2: SELL -->
+            <h3 class="reveal"
+                style="margin-top: 80px; margin-bottom: 20px; font-size: 1.8rem; border-left: 4px solid #10b981; padding-left: 15px;">
+                Fase 2: <span style="color: #10b981;">Vendita</span> (Target Profit)
+            </h3>
+
+            <div class="tech-pipeline reveal">
+                <div class="pipeline-line"
+                    style="background: linear-gradient(90deg, transparent, #10b981, transparent);"></div>
+
+                <!-- CARD 04 -->
+                <div class="tech-card" style="border-top-color: rgba(16, 185, 129, 0.3);">
+                    <div class="tech-number">04</div>
+                    <div class="tech-icon" style="color: #10b981; border-color: rgba(16, 185, 129, 0.2);"><i
+                            class="fa-solid fa-crosshairs"></i></div>
+                    <h3>Target Lock</h3>
+                    <p>Calcolo istantaneo. Appena eseguito l'acquisto, il bot piazza immediatamente un ordine Limit Sell
+                        a +1.2% (1% netto).</p>
+                </div>
+
+                <!-- CARD 05 -->
+                <div class="tech-card" style="border-top-color: rgba(16, 185, 129, 0.3);">
+                    <div class="tech-number">05</div>
+                    <div class="tech-icon" style="color: #10b981; border-color: rgba(16, 185, 129, 0.2);"><i
+                            class="fa-solid fa-stopwatch"></i></div>
+                    <h3>The Wait</h3>
+                    <p>Pazienza digitale. Il bot monitora il prezzo tick-by-tick. Nessuna emozione, solo attesa
+                        statistica del raggiungimento del target.</p>
+                </div>
+
+                <!-- CARD 06 -->
+                <div class="tech-card" style="border-top-color: rgba(16, 185, 129, 0.3);">
+                    <div class="tech-number">06</div>
+                    <div class="tech-icon" style="color: #10b981; border-color: rgba(16, 185, 129, 0.2);"><i
+                            class="fa-solid fa-sack-dollar"></i></div>
+                    <h3>Cash Out</h3>
+                    <p>Esecuzione. Ordine completato, profitto incassato in EUR. Database aggiornato e ciclo concluso.
+                        Pronto per la prossima caccia.</p>
+                </div>
             </div>
         </div>
     </section>

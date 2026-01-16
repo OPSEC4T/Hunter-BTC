@@ -53,11 +53,23 @@ docker-compose up -d
 *Questo comando scaricherà le immagini, costruirà i servizi e avvierà il protocollo in background.*
 
 ### 4️⃣ Attivazione del "Cervello" (n8n)
-Una volta avviati i container, accedi alla dashboard di controllo n8n:
 
-👉 **Apri il browser su: [http://localhost:5678/](http://localhost:5678/)**
+Una volta avviati i container, accedi alla dashboard di controllo n8n per configurare l'automazione del protocollo.
 
-Da qui potrai configurare i workflow visivi, collegare i webhook e monitorare l'attività del bot in tempo reale.
+👉 **Dashboard locale:** [http://localhost:5678/](http://localhost:5678/)
+
+
+#### 🛠️ Setup n8n
+All'interno dell'interfaccia, dovrai configurare i workflow visivi seguendo questi passaggi:
+
+* **Database MySQL**: Crea le credenziali utilizzando i parametri presenti nel file `docker-compose.yml`.
+* **Telegram Bot**: 
+    * Genera il tuo bot tramite [@BotFather](https://telegram.me/BotFather).
+    * Salva il **Token API** e inseriscilo nelle impostazioni di n8n.
+* **Identità Digitale**: 
+    * Contatta [@userinfobot](https://telegram.me/userinfobot) per ottenere il tuo **ID utente**.
+    * Sostituisci l'ID in tutti i **nodi Telegram** all'interno dei workflow per abilitare le notifiche.
+
 
 ---
 

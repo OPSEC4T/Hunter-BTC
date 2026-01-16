@@ -16,6 +16,13 @@ Il sistema utilizza uno stack tecnologico moderno containerizzato:
 *   **Docker Container**: Isolamento totale e portabilità.
 *   **Telegram Bot**: Centro di comando mobile. Imposta target e capitale da investire, ricevi notifiche "Sniper" e monitora le performance in tempo reale direttamente dallo smartphone.
 *   **n8n Automation**: Il "Cervello" operativo che orchestra i flussi di dati e le notifiche.
+*   **MySQL Database**: Archiviazione sicura e storicizzazione di tutte le transazioni e i log operativi.
+
+<div align="center">
+
+![Docker](https://img.shields.io/badge/DOCKER-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![MySQL](https://img.shields.io/badge/MYSQL-F29111?style=for-the-badge&logo=mysql&logoColor=white) ![n8n](https://img.shields.io/badge/N8N-FF6584?style=for-the-badge&logo=n8n&logoColor=white) ![Telegram](https://img.shields.io/badge/TELEGRAM-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)
+
+</div>
 
 ---
 

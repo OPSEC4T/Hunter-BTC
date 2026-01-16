@@ -7,7 +7,7 @@
 
 **Hunter-BTC** opera direttamente sul tuo hardware, eliminando intermediari, costi di gestione e rischi di custodia terzi.
 
-[![Whitepaper](https://img.shields.io/badge/WHITEPAPER-Read_Docs-F7931A?style=for-the-badge&logo=read-the-docs&logoColor=white)](https://opsec4t.github.io/Hunter-BTC/Trade-BTC.html#problem)
+[![Whitepaper](https://img.shields.io/badge/WHITEPAPER-555555?style=for-the-badge&&logoColor=white)](https://opsec4t.github.io/Hunter-BTC/Trade-BTC.html#problem)[![Read Docs](https://img.shields.io/badge/READ_DOCS-F7931A?style=for-the-badge&logoColor=white)](https://github.com/OPSEC4T/Hunter-BTC/blob/main/Hunter-BTC.pdf)
 
 </div> 
 

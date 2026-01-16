@@ -60,7 +60,7 @@ Una volta avviati i container, accedi alla dashboard di controllo n8n per config
 
 
 #### 🛠️ Setup n8n
-All'interno dell'interfaccia, dovrai configurare i workflow visivi seguendo questi passaggi:
+Dopo aver importato correttamente il [workflow](https://github.com/OPSEC4T/Hunter-BTC/blob/main/Hunter-BTC/Workflow%20n8n/Hunter-BTC.json) in n8n, dovrai configurarlo seguendo questi passaggi:
 
 * **Database MySQL**: Crea le credenziali utilizzando i parametri presenti nel file `docker-compose.yml`.
 * **Telegram Bot**: 

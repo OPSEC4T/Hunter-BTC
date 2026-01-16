@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n_trading_bot
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - N8N_ENCRYPTION_KEY=chiave_segreta_123_cambiami
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_METRICS_ENABLED=false
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+
+  #utente: test@test.com
+  #password: Test1test
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_trading_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=trading_bot
+      - MYSQL_USER=trader
+      - MYSQL_PASSWORD=trader_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+
+  adminer:
+    image: adminer
+    container_name: adminer_ui
+    restart: always
+    ports:
+      - "8080:8080"
+
+#server: mysql
+#utente: trader
+#password: trader_password
+#database: trading_bot

@@ -1,0 +1,1430 @@
+{
+  "name": "Hunter-BTC",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Modulo 2: MONITORAGGIO & ACQUISTO\n\n- **Input**: Prezzo BTC/EUR (Binance) + Target (DB).\n- **Logica**: Se Prezzo <= Target → COMPRA.\n- **Output**: Registra trade su DB e notifica Telegram.",
+        "height": 384,
+        "width": 1568,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        592,
+        704
+      ],
+      "typeVersion": 1,
+      "id": "f19242a6-f627-4c25-b40b-bc01dfbbe868",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "308cd545-9de3-46ea-b99c-caff6b8d525e",
+      "name": "Ogni Minuto",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        672,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.binance.com/api/v3/ticker/price?symbol=BTCEUR",
+        "options": {}
+      },
+      "id": "909b0d99-2710-4f42-9e53-742d00673c6d",
+      "name": "Prezzo BTC/EUR",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        864,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "IL_TUO_ID_PROFILO_TELEGRAM",
+        "text": "=🚀 *ORDINE DI ACQUISTO ESEGUITO* 🚀\n\n📊 **Dettagli Operazione:**\n━━━━━━━━━━━━━━━━━━\n💰 *Coppia:* BTC/EUR\n📥 *Prezzo Entrata:* {{ Number($node[\"Prezzo BTC/EUR\"].json.price).toFixed(2) }} €\n💵 *Capitale Impiegato:* {{ Number($node[\"Leggi Target\"].json.data[0].invest_amount).toFixed(2) }} €\n\nIl bot è ora in modalità \"Hunter\". \nMonitoraggio attivo per la chiusura automatica della posizione.\n\n🎯 **Strategia d'Uscita (+1.2%):**\n━━━━━━━━━━━━━━━━━━\n📈 *Prezzo Vendita Target:* {{ (Number($node[\"Prezzo BTC/EUR\"].json.price) * 1.012).toFixed(2) }} €",
+        "additionalFields": {}
+      },
+      "id": "d6fc3238-6d25-4995-9a18-41e75e4c9aa5",
+      "name": "Notifica Acquisto TG",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        752
+      ],
+      "webhookId": "7fd875b9-9ab6-41d0-b5d4-afe4da0baea2",
+      "credentials": {
+        "telegramApi": {
+          "id": "USspwxIQAK0eHkxU",
+          "name": "Telegram API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Modulo 3: VENDITA & PROFITTO\n\n- **Input**: Trade OPEN (DB) + Prezzo attuale.\n- **Logica**: Se Prezzo attuale >= Prezzo Acquisto + 1.2% → VENDE.\n- **Ciclo Perpetual**: Dopo la vendita, crea automaticamente un nuovo Target a -0.5%.\n- **Output**: Eliminazione trade vecchio, inserimento nuovo target e report profitto su Telegram.",
+        "height": 352,
+        "width": 1296,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        592,
+        1136
+      ],
+      "typeVersion": 1,
+      "id": "b4819d07-fbe1-4f06-90d1-6afdfbcd25a6",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "chatId": "IL_TUO_ID_PROFILO_TELEGRAM",
+        "text": "=💰 **PROFITTO INCASSATO!** 💰\n\n📊 **Dettagli Trade:**\n━━━━━━━━━━━━━━━━━━\n📉 *Acquisto:* {{ Number($node[\"Cerca Trade Aperto\"].json.price).toFixed(2) }} €\n📈 *Vendita:* {{ Number($node[\"Prezzo Attuale Hunter\"].json.price).toFixed(2) }} €\n\n✨ **Performance Reale:**\n━━━━━━━━━━━━━━━━━━\n📈 *Lordo:* +{{ ((Number($node[\"Prezzo Attuale Hunter\"].json.price) / Number($node[\"Cerca Trade Aperto\"].json.price) - 1) * 100).toFixed(2) }}%\n💸 *Netto (Fee Incluse):* +{{ ((Number($node[\"Prezzo Attuale Hunter\"].json.price) / Number($node[\"Cerca Trade Aperto\"].json.price) - 1) * 100 - 0.20).toFixed(2) }}%\n\n🔄 **Strategia Hunter Attiva**\n━━━━━━━━━━━━━━━━━━\n🎯 *Nuovo Target:* {{ (Number($node[\"Prezzo Attuale Hunter\"].json.price) * 0.995).toFixed(2) }} € (-0.5%)\n\nIl bot ha già riposizionato l'ordine e continua la caccia! 🚀",
+        "additionalFields": {}
+      },
+      "id": "8aeaf748-4f19-43e7-96ff-65da685a2b3b",
+      "name": "Notifica Vendita TG",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        1216
+      ],
+      "webhookId": "e841105b-4dac-4e7d-bf7c-d319fbbb3135",
+      "credentials": {
+        "telegramApi": {
+          "id": "USspwxIQAK0eHkxU",
+          "name": "Telegram API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE trades \nSET status = 'CLOSED', timestamp = CURRENT_TIMESTAMP \nWHERE id = {{ $('Target Raggiunto?').item.json.id }};",
+        "options": {}
+      },
+      "id": "a89188cf-e758-44f9-b71a-25b56b61b8dd",
+      "name": "Chiudi Trade DB",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        1216
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ Number($(\"Prezzo Attuale Hunter\").item.json.price) }}",
+              "operation": "largerEqual",
+              "value2": "={{ Number($(\"Cerca Trade Aperto\").item.json.price) * 1.012 }}"
+            }
+          ]
+        }
+      },
+      "id": "bf19ed5b-283b-4483-9cd4-d2d8c20d42f2",
+      "name": "Target Raggiunto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.binance.com/api/v3/ticker/price?symbol=BTCEUR",
+        "options": {}
+      },
+      "id": "491ee57e-571d-4495-961c-4ba199113021",
+      "name": "Prezzo Attuale Hunter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        832,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "id": "95ecd8e6-eec8-40a3-bf9f-c217580030e1",
+      "name": "Ogni Minuto Hunter",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, price, amount, pair \nFROM trades \nWHERE status = 'OPEN' \nORDER BY price ASC \nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1024,
+        1312
+      ],
+      "id": "385a707d-4824-4cd2-a279-e1112424a013",
+      "name": "Cerca Trade Aperto",
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM targets_attivi \nWHERE id = {{ $json.data[0].id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1648,
+        912
+      ],
+      "id": "c5a5fc4e-bde8-4cd8-bef1-18698d2b2997",
+      "name": "Smarca Target",
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1488,
+        912
+      ],
+      "id": "6825bb5d-8c12-4cb5-ae72-d0a125d218a3",
+      "name": "Wait",
+      "webhookId": "f59d6b5e-0bb3-4275-a0f2-5ed0831650cd"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1776,
+        752
+      ],
+      "id": "8379437e-d099-4686-a0df-0c7d991b31a9",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO trades (pair, type, price, amount, status) \nVALUES (\n  'BTCEUR', \n  'BUY', \n  {{ $node[\"Prezzo BTC/EUR\"].json.price }}, \n  {{ $json.data[0].invest_amount }}, \n  'OPEN'\n);",
+        "options": {}
+      },
+      "id": "e6616ded-a4f5-47b6-9b84-35af4e792cc8",
+      "name": "Registra Acquisto Trade",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        736
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, target_price, invest_amount \nFROM targets_attivi \nWHERE status = 'PENDING' \nORDER BY target_price DESC \nLIMIT 1;",
+        "options": {
+          "detailedOutput": true
+        }
+      },
+      "id": "3ad45ff5-871d-45a1-b92e-e28947609155",
+      "name": "Leggi Target",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        928
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ Number($node[\"Prezzo BTC/EUR\"].json.price) }}",
+              "operation": "smallerEqual",
+              "value2": "={{ $json.data[0].target_price }}"
+            }
+          ]
+        }
+      },
+      "id": "66226b7a-a8c4-499f-8e95-de7cffff5d9b",
+      "name": "Decisione Acquisto",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Modulo 1: LOGICA OPERATIVA\n\n- **Input**: Messaggi in entrata da Telegram (Polling ogni 30s).\n- **Sicurezza**: Filtro \"Dogana Digitale\" (confronto last_message_id su DB) per evitare l'esecuzione multipla dello stesso comando.\n- **Logica**: Router dei comandi tramite nodi Filter per dividere il flusso ( /target, /open, /stats, /prezzo).\n- **Output**: Aggiornamento configurazioni su DB o invio report istantanei all'utente.\n\n",
+        "height": 912,
+        "width": 2480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        592,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "ec51b085-bd47-45a5-9099-fd64f0b4b8c9",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.current_msg_id }}",
+              "operation": "larger",
+              "value2": "={{ $json.last_message_id }}"
+            }
+          ]
+        }
+      },
+      "id": "2a2d6e39-77af-408e-98fb-70f9ca2e304b",
+      "name": "È un nuovo messaggio?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE settings SET last_message_id = {{ $node[\"Chiedi a Telegram\"].json[\"result\"][0][\"message\"][\"message_id\"] }} WHERE id = 1;",
+        "options": {}
+      },
+      "id": "0e2065e4-10bf-4067-9cf6-c381b119a35e",
+      "name": "Aggiorna ID Messaggio1",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        -64
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "IL_TUO_ID_PROFILO_TELEGRAM",
+        "text": "=📊 *REPORT PERFORMANCE BOT* 📊\n\n✅ *Operazioni Concluse:* {{ $json.total_trades }}\n💰 *Profitto Totale Netto:* {{ Number($json.total_profit_net).toFixed(2) }} €\n\nIl tuo capitale sta lavorando correttamente!",
+        "additionalFields": {}
+      },
+      "id": "274f28a6-1051-4e50-bf95-66c420cbab52",
+      "name": "Invia Report Stats1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        -64
+      ],
+      "webhookId": "2c4ee4d3-97a2-4b04-86aa-69d969260a65",
+      "credentials": {
+        "telegramApi": {
+          "id": "USspwxIQAK0eHkxU",
+          "name": "Telegram API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) as total_trades, SUM(amount * 0.01) as total_profit_net FROM trades WHERE status = 'CLOSED';",
+        "options": {}
+      },
+      "id": "f3483864-f9d7-401f-bdb6-8e789d28b0db",
+      "name": "Calcola Statistiche1",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        -64
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $node[\"Chiedi a Telegram\"].json[\"result\"][0][\"message\"][\"text\"] }}",
+              "operation": "startsWith",
+              "value2": "/prezzo"
+            }
+          ]
+        }
+      },
+      "id": "bcbba31c-10a2-415f-a1bf-ca407afcf460",
+      "name": "Filtro /prezzo",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.binance.com/api/v3/ticker/price?symbol=BTCEUR",
+        "options": {}
+      },
+      "id": "5cca2796-5cdb-439e-a48b-6e975008e630",
+      "name": "Binance Prezzo Istantaneo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2080,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "=IL_TUO_ID_PROFILO_TELEGRAM",
+        "text": "=💰 **Quotazione BTC/EUR**\n\nIl prezzo attuale su Binance è:\n🚀 **{{ Number($json.price).toFixed(2) }} €**",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "8f6b6468-5a17-4515-89f8-462b1596b1f6",
+      "name": "Notifica Prezzo TG",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        128
+      ],
+      "webhookId": "a1e4351f-416e-4375-b5c8-44095e1a6586",
+      "credentials": {
+        "telegramApi": {
+          "id": "USspwxIQAK0eHkxU",
+          "name": "Telegram API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $node[\"Chiedi a Telegram\"].json[\"result\"][0][\"message\"][\"text\"] }}",
+              "operation": "startsWith",
+              "value2": "/open"
+            }
+          ]
+        }
+      },
+      "id": "ab46ac1f-5b3b-4057-b00c-acbe44b2889d",
+      "name": "Filtro /open",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, price, amount, timestamp FROM trades WHERE status = 'OPEN' ORDER BY timestamp DESC;",
+        "options": {}
+      },
+      "id": "5057112c-32a2-44a2-9d3f-56773d9b131c",
+      "name": "Cerca Trade nel DB",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        304
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.id }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "3a9181e6-8cf9-4fca-9760-76e6ca50a025",
+      "name": "Esiste Trade?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "=IL_TUO_ID_PROFILO_TELEGRAM",
+        "text": "📦 **Stato Operazione**\n\nNessuna operazione aperta al momento. Il bot è in attesa del tuo target.",
+        "additionalFields": {}
+      },
+      "id": "1a9e65f9-871d-4550-809a-8cf62c1f12d6",
+      "name": "Notifica No Trade",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        2544,
+        320
+      ],
+      "webhookId": "e516874d-295d-4ba1-ac8e-977bb92f7419",
+      "credentials": {
+        "telegramApi": {
+          "id": "USspwxIQAK0eHkxU",
+          "name": "Telegram API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE settings SET last_message_id = {{ $node[\"Chiedi a Telegram\"].json[\"result\"][0][\"message\"][\"message_id\"] }} WHERE id = 1;",
+        "options": {}
+      },
+      "id": "610cf51b-cfe0-413e-90ea-11a179186fa0",
+      "name": "Aggiorna ID Messaggio",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        128
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE settings SET last_message_id = {{ $node[\"Chiedi a Telegram\"].json[\"result\"][0][\"message\"][\"message_id\"] }} WHERE id = 1;",
+        "options": {}
+      },
+      "id": "26586c80-a6e8-49d6-a00f-a8544465b6f6",
+      "name": "Aggiorna ID Messaggio2",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1872,
+        304
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "id": "2e75ecea-c448-4745-ad69-75ec3c300d19",
+      "name": "Ogni 30 Secondì",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        640,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.result[0].message.from.id }}",
+              "operation": "equal",
+              "value2": 7272629026
+            }
+          ]
+        }
+      },
+      "id": "66ca7c52-aa07-4334-a033-1d3aecfdae9b",
+      "name": "Filtro ID",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    COALESCE(MAX(last_message_id), 0) as last_message_id, \n    {{ $node[\"Chiedi a Telegram\"].json.result[0].message.message_id }} as current_msg_id \nFROM settings;",
+        "options": {}
+      },
+      "id": "a080d7a5-7d7c-46b6-91b0-e394b61a9acc",
+      "name": "Check Last Msg ID",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        0
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/bot8128559412:AAEjZprvralOSKz8BLZJNUMClqDukrXa8M8/getUpdates?offset=-1",
+        "options": {}
+      },
+      "id": "97c39de3-f71f-4164-9802-b7ce6be0aa65",
+      "name": "Chiedi a Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        832,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Chiedi a Telegram').item.json.result[0].message.text }}",
+              "operation": "startsWith",
+              "value2": "/target"
+            }
+          ]
+        }
+      },
+      "id": "57048082-6beb-40e7-96af-28ed3b0a0d7e",
+      "name": "/target",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        -224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE settings SET last_message_id = {{ $node[\"Chiedi a Telegram\"].json[\"result\"][0][\"message\"][\"message_id\"] }} WHERE id = 1;",
+        "options": {}
+      },
+      "id": "5824bb62-1956-464a-bb1c-00da8352b739",
+      "name": "Aggiorna ID Messaggio3",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        2096,
+        -240
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO targets_attivi (target_price, invest_amount)\nSELECT \n  {{ $node[\"Chiedi a Telegram\"].json.result[0].message.text.split(' ')[1] }}, \n  invest_amount_usdt\nFROM settings \nWHERE id = 1;",
+        "options": {}
+      },
+      "id": "01e9fba5-5e6e-452e-b99c-9bf8922afaaa",
+      "name": "Update Target MySQL2",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        -240
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=IL_TUO_ID_PROFILO_TELEGRAM",
+        "text": "=🎯 **Target Aggiornato!**\n\nIl nuovo prezzo di acquisto è stato impostato a:\n💰 **{{ $node[\"Chiedi a Telegram\"].json.result[0].message.text.split(' ')[1] }} €**\n\nIl bot monitorerà il mercato e acquisterà non appena il prezzo toccherà questa soglia.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "0ddd2c6c-ad24-4114-be48-2abbabdd2d7f",
+      "name": "Conferma Target TG",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        2304,
+        -240
+      ],
+      "webhookId": "4647624a-772c-4d65-b38b-394ec9d0648e",
+      "credentials": {
+        "telegramApi": {
+          "id": "USspwxIQAK0eHkxU",
+          "name": "Telegram API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.binance.com/api/v3/ticker/price?symbol=BTCEUR",
+        "options": {}
+      },
+      "id": "76c09981-af04-4831-8b7c-6ca572dfd816",
+      "name": "Prezzo Attuale per Open",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2496,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "=IL_TUO_ID_PROFILO_TELEGRAM",
+        "text": "={{ $json.testo_report }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "c3d0aad7-2c53-41b5-9043-a125189ebeed",
+      "name": "Report Open Positivo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        176
+      ],
+      "webhookId": "d90c0352-585b-4427-9c0f-2838373e33ee",
+      "credentials": {
+        "telegramApi": {
+          "id": "USspwxIQAK0eHkxU",
+          "name": "Telegram API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Usiamo la sintassi corretta per nomi con spazi\nconst trades = $(\"Cerca Trade nel DB\").all();\nconst prezzoBinance = $(\"Prezzo Attuale per Open\").first().json.price;\n\n// Gestione caso nessun trade trovato\nif (!trades || trades.length === 0 || trades[0].json.id === undefined) {\n  return { testo_report: \"Nessuna operazione aperta al momento.\" };\n}\n\nlet report = `📦 **PORTAFOGLIO POSIZIONI APERTE** 📦\\n`;\nreport += `━━━━━━━━━━━━━━━━━━\\n`;\nreport += `Hai attualmente **${trades.length}** posizioni aperte.\\n\\n`;\n\nconst lista = trades.map(t => {\n  const pAcquisto = Number(t.json.price);\n  const pVendita = (pAcquisto * 1.012).toFixed(2);\n  const perf = ((Number(prezzoBinance) / pAcquisto - 1) * 100).toFixed(2);\n  \n  return `🔹 **ID ${t.json.id}**\\n💰 Acquisto: ${pAcquisto.toFixed(2)} €\\n🎯 Vendita: ${pVendita} €\\n📊 Perf: ${perf}%`;\n}).join('\\n\\n---\\n\\n');\n\nreturn { \n  testo_report: report + lista + `\\n\\n🚀 *Prezzo Binance: ${Number(prezzoBinance).toFixed(2)} €*` \n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2704,
+        176
+      ],
+      "id": "e7104e95-9daa-497b-b0ae-0b082e46529e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $node[\"Chiedi a Telegram\"].json[\"result\"][0][\"message\"][\"text\"] }}",
+              "operation": "startsWith",
+              "value2": "/invest"
+            }
+          ]
+        }
+      },
+      "id": "822c38e9-cf69-4231-ba97-3284f4c77261",
+      "name": "Filtro /invest",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Accediamo al testo del primo messaggio nell'array result\nconst text = $(\"Chiedi a Telegram\").first().json.result[0].message.text;\n\n// Estraiamo il valore numerico rimuovendo il comando /invest\nconst amount = text.replace('/invest', '').trim();\n\nreturn {\n  nuovo_capitale: parseFloat(amount),\n  chat_id: $(\"Chiedi a Telegram\").first().json.result[0].message.chat.id\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2096,
+        480
+      ],
+      "id": "754881e9-f018-4edd-b2d5-5c8c30a3136a",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=UPDATE settings SET last_message_id = {{ $node[\"Chiedi a Telegram\"].json[\"result\"][0][\"message\"][\"message_id\"] }} WHERE id = 1;",
+        "options": {}
+      },
+      "id": "8f3d8804-3f8d-41eb-b8ec-8afe04e2bd7f",
+      "name": "Aggiorna ID Messaggio4",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        480
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE settings \nSET invest_amount_usdt = {{ $json.nuovo_capitale }} \nWHERE id = 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        2272,
+        480
+      ],
+      "id": "ceaf23c4-8ee5-40de-a7e9-2be586296a31",
+      "name": "Aggiorna Capitale",
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=IL_TUO_ID_PROFILO_TELEGRAM",
+        "text": "=💰 **CAPITALE AGGIORNATO** 💰 ━━━━━━━━━━━━━━━━━━ \nNuovo importo per operazione:\n✅ **{{ $node[\"Code in JavaScript1\"].json.nuovo_capitale.toFixed(2) }} €**  \n\nDa questo momento, ogni nuovo target che imposterai con il comando `/target` utilizzerà automaticamente questo capitale.  \n\n🚀 *Hunter Bot pronto all'azione!*",
+        "additionalFields": {}
+      },
+      "id": "f2ac5800-5d0b-4f79-807e-156ea4595ca7",
+      "name": "Notifica Cambio Capitale",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        480
+      ],
+      "webhookId": "e516874d-295d-4ba1-ac8e-977bb92f7419",
+      "credentials": {
+        "telegramApi": {
+          "id": "USspwxIQAK0eHkxU",
+          "name": "Telegram API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Chiedi a Telegram').item.json.result[0].message.text }}",
+              "operation": "startsWith",
+              "value2": "/stats"
+            }
+          ]
+        }
+      },
+      "id": "5065171e-f8d9-42c7-89b4-44e9cdcb0766",
+      "name": "Filtro /stats",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO targets_attivi (target_price, invest_amount)\nSELECT \n  (price * 1.012) * 0.995, -- Calcola il prezzo di vendita e scende dello 0.5% per il rientro\n  (SELECT invest_amount_usdt FROM settings WHERE id = 1) -- Prende il capitale attuale\nFROM trades \nWHERE id = {{ $json.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        1408,
+        1216
+      ],
+      "id": "fab1910a-9fba-40e5-93e5-44511c1b1831",
+      "name": "Prepara Rientro",
+      "credentials": {
+        "mySql": {
+          "id": "vEatrohzeEVYviB7",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ogni Minuto": {
+      "main": [
+        [
+          {
+            "node": "Prezzo BTC/EUR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prezzo BTC/EUR": {
+      "main": [
+        [
+          {
+            "node": "Leggi Target",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chiudi Trade DB": {
+      "main": [
+        [
+          {
+            "node": "Notifica Vendita TG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Target Raggiunto?": {
+      "main": [
+        [
+          {
+            "node": "Prepara Rientro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prezzo Attuale Hunter": {
+      "main": [
+        [
+          {
+            "node": "Cerca Trade Aperto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ogni Minuto Hunter": {
+      "main": [
+        [
+          {
+            "node": "Prezzo Attuale Hunter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cerca Trade Aperto": {
+      "main": [
+        [
+          {
+            "node": "Target Raggiunto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Smarca Target": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Smarca Target",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Notifica Acquisto TG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registra Acquisto Trade": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leggi Target": {
+      "main": [
+        [
+          {
+            "node": "Decisione Acquisto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decisione Acquisto": {
+      "main": [
+        [
+          {
+            "node": "Registra Acquisto Trade",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "È un nuovo messaggio?": {
+      "main": [
+        [
+          {
+            "node": "Filtro /stats",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filtro /prezzo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filtro /open",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "/target",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filtro /invest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggiorna ID Messaggio1": {
+      "main": [
+        [
+          {
+            "node": "Calcola Statistiche1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcola Statistiche1": {
+      "main": [
+        [
+          {
+            "node": "Invia Report Stats1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro /prezzo": {
+      "main": [
+        [
+          {
+            "node": "Aggiorna ID Messaggio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Binance Prezzo Istantaneo": {
+      "main": [
+        [
+          {
+            "node": "Notifica Prezzo TG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro /open": {
+      "main": [
+        [
+          {
+            "node": "Aggiorna ID Messaggio2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cerca Trade nel DB": {
+      "main": [
+        [
+          {
+            "node": "Esiste Trade?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esiste Trade?": {
+      "main": [
+        [
+          {
+            "node": "Prezzo Attuale per Open",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notifica No Trade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggiorna ID Messaggio": {
+      "main": [
+        [
+          {
+            "node": "Binance Prezzo Istantaneo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggiorna ID Messaggio2": {
+      "main": [
+        [
+          {
+            "node": "Cerca Trade nel DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ogni 30 Secondì": {
+      "main": [
+        [
+          {
+            "node": "Chiedi a Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro ID": {
+      "main": [
+        [
+          {
+            "node": "Check Last Msg ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Last Msg ID": {
+      "main": [
+        [
+          {
+            "node": "È un nuovo messaggio?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chiedi a Telegram": {
+      "main": [
+        [
+          {
+            "node": "Filtro ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/target": {
+      "main": [
+        [
+          {
+            "node": "Update Target MySQL2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggiorna ID Messaggio3": {
+      "main": [
+        [
+          {
+            "node": "Conferma Target TG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Target MySQL2": {
+      "main": [
+        [
+          {
+            "node": "Aggiorna ID Messaggio3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prezzo Attuale per Open": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Report Open Positivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro /invest": {
+      "main": [
+        [
+          {
+            "node": "Aggiorna ID Messaggio4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggiorna ID Messaggio4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Aggiorna Capitale",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggiorna Capitale": {
+      "main": [
+        [
+          {
+            "node": "Notifica Cambio Capitale",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro /stats": {
+      "main": [
+        [
+          {
+            "node": "Aggiorna ID Messaggio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notifica Vendita TG": {
+      "main": [
+        []
+      ]
+    },
+    "Prepara Rientro": {
+      "main": [
+        [
+          {
+            "node": "Chiudi Trade DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "44a07e3c-3868-4536-a2b8-4c92be571761",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4412763559b981e0b277b586a2c88f9ef384edfe85dedd42548821b62c39feb4"
+  },
+  "id": "X-Tr1n8dCKys4VPmHbBy-",
+  "tags": []
+}

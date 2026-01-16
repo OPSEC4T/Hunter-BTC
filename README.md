@@ -54,7 +54,7 @@ docker-compose up -d
 
 ### 4️⃣ Attivazione del "Cervello" (n8n)
 
-Una volta avviati i container, accedi alla dashboard di controllo n8n per configurare l'automazione del protocollo.
+Una volta avviati i container, accedi alla dashboard di controllo n8n per configurare l'automazione.
 
 👉 **Dashboard locale:** [http://localhost:5678/](http://localhost:5678/)
 

@@ -66,5 +66,6 @@ Rilasciato sotto licenza **MIT**.
 Sei libero di modificare, distribuire e utilizzare il protocollo per uso personale o commerciale.
 
 ---
-*Hunter-BTC è un progetto teorico funzionante. Il trading di criptovalute comporta rischi elevati. 
+*Hunter-BTC è un progetto teorico funzionante. 
+Il trading di criptovalute comporta rischi elevati. 
 Usa sempre una strategia di Risk Management adeguata.*

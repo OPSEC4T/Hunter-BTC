@@ -56,11 +56,6 @@ Da qui potrai configurare i workflow visivi, collegare i webhook e monitorare l'
 
 ---
 
-## 🔒 Sicurezza & Privacy
-Come descritto nel documento tecnico (PDF):
-*   **Local Encryption**: Nessun dato sensibile viene inviato via internet, eccetto le chiamate firmate a Binance.
-*   **Sandbox**: L'ambiente Docker garantisce che il software operi in un ambiente isolato dal resto del tuo PC.
-
 ## 📄 Licenza
 Rilasciato sotto licenza **MIT**.
 Sei libero di modificare, distribuire e utilizzare il protocollo per uso personale o commerciale.

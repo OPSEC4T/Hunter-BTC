@@ -1,10 +1,15 @@
-#  HUNTER-BTC | Bot trading Bitcoin
-> **Esecuzione 24/7 automatica**
+<div align="center">
+
+# HUNTER-BTC | Bot trading Bitcoin
+
+**Esecuzione 24/7 automatica**
 
 
 **Hunter-BTC** opera direttamente sul tuo hardware, eliminando intermediari, costi di gestione e rischi di custodia terzi.
 
-👉 [Whitepaper](https://opsec4t.github.io/Hunter-BTC/Trade-BTC.html#problem) 
+[![Whitepaper](https://img.shields.io/badge/WHITEPAPER-Read_Docs-F7931A?style=for-the-badge&logo=read-the-docs&logoColor=white)](https://opsec4t.github.io/Hunter-BTC/Trade-BTC.html#problem)
+
+</div> 
 
 
 ---
